@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAdminStore } from '../store/adminStore';
 import { XIcon, ChevronRight } from './icons';
 
 export const PromoBanner: React.FC = () => {
-  const banners = useAdminStore((s) => s.banners.filter((b) => b.active));
+  const allBanners = useAdminStore((s) => s.banners);
+  const banners = useMemo(() => allBanners.filter((b) => b.active), [allBanners]);
   const [index, setIndex] = useState(0);
   const [dismissed, setDismissed] = useState(false);
 
