@@ -21,6 +21,8 @@ import { Recommendations } from '../components/Recommendations';
 import { StarRating } from '../components/StarRating';
 import { StatsBar } from '../components/StatsBar';
 import { ShareChat } from '../components/ShareChat';
+import { SidebarWidgets } from '../components/SidebarWidgets';
+import { AdSlot } from '../components/AdSlot';
 import { ImageGallery } from '../components/ImageGallery';
 import { ProductBulletPoints } from '../components/ProductBulletPoints';
 import { FrequentlyBoughtTogether } from '../components/FrequentlyBoughtTogether';
@@ -319,7 +321,9 @@ const ExternalNFTDetail: React.FC = () => {
       />
 
       {/* ===== ABOVE THE FOLD: 2-column grid ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 lg:gap-8 mt-2">
+      <div className="flex gap-6 mt-2">
+      <div className="flex-1 min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 lg:gap-8">
         {/* Left: Image Gallery */}
         <div>
           <ImageGallery
@@ -769,6 +773,13 @@ const ExternalNFTDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      </div>
+      <aside className="hidden xl:block w-[240px] shrink-0">
+        <div className="sticky top-[160px]">
+          <SidebarWidgets />
+        </div>
+      </aside>
+      </div>
 
       {/* ===== BELOW THE FOLD: Full-width sections ===== */}
 
@@ -787,6 +798,10 @@ const ExternalNFTDetail: React.FC = () => {
           />
         </section>
       )}
+
+      <div className="mt-8">
+        <AdSlot placement="feed" />
+      </div>
 
       {/* 2. Properties / Traits */}
       {displayTraits.length > 0 && (
@@ -858,6 +873,10 @@ const ExternalNFTDetail: React.FC = () => {
           </div>
         )}
       </section>
+
+      <div className="mt-8">
+        <AdSlot placement="feed" />
+      </div>
 
       {/* 4. Product Details */}
       <section className="mt-12 border-t border-os-border/30 pt-8">
@@ -970,7 +989,31 @@ const ExternalNFTDetail: React.FC = () => {
 
       {/* 7. Share Chat */}
       <section className="mt-12 border-t border-os-border/30 pt-8">
-        <ShareChat threadId={`nft-${collectionId}-${tokenIndex}`} />
+        <div className="flex gap-5">
+          {/* Left vertical ad banner */}
+          <aside className="hidden xl:block w-[160px] shrink-0">
+            <div className="sticky top-[80px] space-y-4">
+              <AdSlot placement="sidebar" />
+              <AdSlot placement="sidebar" />
+            </div>
+          </aside>
+
+          {/* Center chat */}
+          <div className="flex-1 min-w-0">
+            <div className="rounded-2xl border border-os-border/50 bg-os-surface p-5">
+              <ShareChat threadId={`nft-${collectionId}-${tokenIndex}`} title="Discussion" />
+            </div>
+          </div>
+
+          {/* Right vertical ad banner + widgets */}
+          <aside className="hidden lg:block w-[240px] shrink-0">
+            <div className="sticky top-[80px] space-y-4">
+              <AdSlot placement="sidebar" />
+              <AdSlot placement="sidebar" />
+              <SidebarWidgets />
+            </div>
+          </aside>
+        </div>
       </section>
 
       {/* 8. Compare Similar Items */}
@@ -987,6 +1030,10 @@ const ExternalNFTDetail: React.FC = () => {
           </div>
         </section>
       )}
+
+      <div className="mt-8">
+        <AdSlot placement="banner" />
+      </div>
 
       {/* 9. More from Collection */}
       {moreFromCollection.length > 0 && (
@@ -1016,6 +1063,10 @@ const ExternalNFTDetail: React.FC = () => {
           currentCollectionId={collectionId}
           category={collection.category}
         />
+      </div>
+
+      <div className="mt-8">
+        <AdSlot placement="feed" />
       </div>
 
       {/* 12. Recently Viewed */}

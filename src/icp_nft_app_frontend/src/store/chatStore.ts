@@ -7,6 +7,7 @@ export interface ChatMessage {
   text: string;
   timestamp: number;
   likes: number;
+  dislikes: number;
 }
 
 export const CHANNELS = [
@@ -21,6 +22,7 @@ export const DEFAULT_CHANNEL = 'global-chat';
 
 const STORAGE_KEY = 'nft_chat_messages';
 const LIKES_STORAGE_KEY = 'nft_chat_likes';
+const DISLIKES_STORAGE_KEY = 'nft_chat_dislikes';
 
 function genId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -29,9 +31,11 @@ function genId(): string {
 interface ChatStore {
   messages: ChatMessage[];
   likedMessages: Record<string, boolean>;
-  addMessage: (msg: Omit<ChatMessage, 'id' | 'timestamp' | 'likes'>) => void;
+  dislikedMessages: Record<string, boolean>;
+  addMessage: (msg: Omit<ChatMessage, 'id' | 'timestamp' | 'likes' | 'dislikes'>) => void;
   deleteMessage: (id: string) => void;
   toggleLike: (messageId: string) => void;
+  toggleDislike: (messageId: string) => void;
   getMessages: (threadId: string) => ChatMessage[];
   getMessageCount: (threadId: string) => number;
   _hydrate: () => void;
@@ -45,12 +49,17 @@ function persistLikes(likes: Record<string, boolean>) {
   try { localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likes)); } catch { /* quota */ }
 }
 
+function persistDislikes(dislikes: Record<string, boolean>) {
+  try { localStorage.setItem(DISLIKES_STORAGE_KEY, JSON.stringify(dislikes)); } catch { /* quota */ }
+}
+
 export const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
   likedMessages: {},
+  dislikedMessages: {},
 
   addMessage: (msg) => {
-    const newMessage: ChatMessage = { ...msg, id: genId(), timestamp: Date.now(), likes: 0 };
+    const newMessage: ChatMessage = { ...msg, id: genId(), timestamp: Date.now(), likes: 0, dislikes: 0 };
     const updated = [newMessage, ...get().messages];
     set({ messages: updated });
     persistMessages(updated);
@@ -84,6 +93,28 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     persistLikes(updatedLikes);
   },
 
+  toggleDislike: (messageId) => {
+    const { messages, dislikedMessages } = get();
+    const alreadyDisliked = !!dislikedMessages[messageId];
+
+    const updatedMessages = messages.map((m) =>
+      m.id === messageId
+        ? { ...m, dislikes: alreadyDisliked ? Math.max(0, m.dislikes - 1) : m.dislikes + 1 }
+        : m
+    );
+
+    const updatedDislikes = { ...dislikedMessages };
+    if (alreadyDisliked) {
+      delete updatedDislikes[messageId];
+    } else {
+      updatedDislikes[messageId] = true;
+    }
+
+    set({ messages: updatedMessages, dislikedMessages: updatedDislikes });
+    persistMessages(updatedMessages);
+    persistDislikes(updatedDislikes);
+  },
+
   getMessages: (threadId) => {
     return get().messages
       .filter((m) => m.threadId === threadId)
@@ -104,5 +135,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       const rawLikes = JSON.parse(localStorage.getItem(LIKES_STORAGE_KEY) || '{}');
       set({ likedMessages: typeof rawLikes === 'object' && rawLikes !== null ? rawLikes : {} });
     } catch { set({ likedMessages: {} }); }
+
+    try {
+      const rawDislikes = JSON.parse(localStorage.getItem(DISLIKES_STORAGE_KEY) || '{}');
+      set({ dislikedMessages: typeof rawDislikes === 'object' && rawDislikes !== null ? rawDislikes : {} });
+    } catch { set({ dislikedMessages: {} }); }
   },
 }));

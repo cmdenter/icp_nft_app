@@ -23,14 +23,14 @@ export const CollectionTabs: React.FC<CollectionTabsProps> = ({
 }) => {
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 border-b border-os-border/30">
-      <div className="flex items-center gap-0">
+      <div className="flex items-center gap-2">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
+              className={`relative px-6 py-4 text-sm font-semibold tracking-wide transition-colors ${
                 isActive ? 'text-white' : 'text-os-text-secondary hover:text-white'
               }`}
             >

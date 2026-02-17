@@ -152,7 +152,7 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
                   href={collection.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card text-os-text-secondary hover:text-white text-xs transition-colors"
+                  className="chip-interactive inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card hover:border-os-border/60 text-os-text-secondary hover:text-white text-xs"
                 >
                   <ExternalLink size={12} />
                   Website
@@ -163,7 +163,7 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
                   href={`https://x.com/${collection.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card text-os-text-secondary hover:text-white text-xs transition-colors"
+                  className="chip-interactive inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card hover:border-os-border/60 text-os-text-secondary hover:text-white text-xs"
                 >
                   <XSocialIcon size={12} />
                   Twitter
@@ -174,7 +174,7 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
                   href={collection.discord}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card text-os-text-secondary hover:text-white text-xs transition-colors"
+                  className="chip-interactive inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-os-card/80 border border-os-border/30 hover:bg-os-card hover:border-os-border/60 text-os-text-secondary hover:text-white text-xs"
                 >
                   <DiscordIcon size={12} />
                   Discord
@@ -185,13 +185,13 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
         </div>
 
         {/* Stats row */}
-        <div className="flex items-center gap-3 flex-wrap mt-6 mb-4">
+        <div className="flex items-center gap-3 flex-wrap mt-6 mb-6">
           {marketLoading && !stats
             ? Array.from({ length: 5 }, (_, i) => <StatSkeleton key={i} />)
             : statItems.map((stat) => (
                 <div
                   key={stat.label}
-                  className="flex flex-col items-center px-4 py-2 rounded-xl bg-os-surface/50 border border-os-border/20"
+                  className="stat-badge flex flex-col items-center px-5 py-2.5 rounded-xl bg-os-surface/50 border border-os-border/20 cursor-default"
                 >
                   <span className="text-lg font-bold text-white leading-tight">
                     {stat.value}

@@ -14,6 +14,8 @@ import { CollectionActivityTable } from '../components/CollectionActivityTable';
 import { CollectionAnalytics } from '../components/CollectionAnalytics';
 import { CollectionAboutSection } from '../components/CollectionAboutSection';
 import { ShareChat } from '../components/ShareChat';
+import { SidebarWidgets } from '../components/SidebarWidgets';
+import { AdSlot } from '../components/AdSlot';
 import { useChatStore } from '../store/chatStore';
 import type { ExtCollectionTab } from '../types';
 
@@ -242,7 +244,7 @@ const ExternalCollection: React.FC = () => {
 
       {/* Tab Content */}
       {activeTab === 'items' && (
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-5">
           {/* Results Bar */}
           <CollectionResultsBar
             totalCount={items.length - failedImages.size}
@@ -256,14 +258,16 @@ const ExternalCollection: React.FC = () => {
             filterOpen={filterOpen}
             toggleFilter={() => setFilterOpen((prev) => !prev)}
             activeFilterCount={activeFilterCount}
+            statusFilter={statusFilter}
+            setStatusFilter={(v) => setStatusFilter(v as StatusFilter)}
           />
 
           {/* Main layout: sidebar + content */}
           {items.length === 0 && loading ? (
             <SkeletonGrid count={10} />
           ) : (
-            <div className="flex gap-0">
-              {/* Desktop sidebar */}
+            <div className="flex gap-5">
+              {/* Desktop filter sidebar */}
               <div className="hidden lg:block">
                 {filterOpen && (
                   <CollectionFilterSidebar
@@ -280,7 +284,7 @@ const ExternalCollection: React.FC = () => {
                 )}
               </div>
 
-              {/* Mobile sidebar overlay */}
+              {/* Mobile filter overlay */}
               {filterOpen && (
                 <div className="fixed inset-0 z-40 lg:hidden">
                   <div
@@ -353,8 +357,21 @@ const ExternalCollection: React.FC = () => {
                   </p>
                 )}
               </div>
+
+              {/* Right sidebar with ads */}
+              <aside className="hidden xl:block w-[240px] shrink-0">
+                <div className="sticky top-[80px] space-y-4">
+                  <AdSlot placement="sidebar" />
+                  <SidebarWidgets />
+                </div>
+              </aside>
             </div>
           )}
+
+          {/* Banner ad below items grid */}
+          <div className="mt-6">
+            <AdSlot placement="banner" />
+          </div>
         </div>
       )}
 
@@ -377,9 +394,38 @@ const ExternalCollection: React.FC = () => {
 
       {activeTab === 'chat' && (
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
-          <ShareChat threadId={`collection-${collectionId}`} title="Collection Discussion" />
+          <div className="flex gap-5">
+            {/* Left vertical ad banner */}
+            <aside className="hidden xl:block w-[160px] shrink-0">
+              <div className="sticky top-[80px] space-y-4">
+                <AdSlot placement="sidebar" />
+                <AdSlot placement="sidebar" />
+              </div>
+            </aside>
+
+            {/* Center chat */}
+            <div className="flex-1 min-w-0">
+              <div className="rounded-2xl border border-os-border/50 bg-os-surface p-5">
+                <ShareChat threadId={`collection-${collectionId}`} title="Collection Discussion" />
+              </div>
+            </div>
+
+            {/* Right vertical ad banner + widgets */}
+            <aside className="hidden lg:block w-[240px] shrink-0">
+              <div className="sticky top-[80px] space-y-4">
+                <AdSlot placement="sidebar" />
+                <AdSlot placement="sidebar" />
+                <SidebarWidgets />
+              </div>
+            </aside>
+          </div>
         </div>
       )}
+
+      {/* Feed ad before about section */}
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 mt-6">
+        <AdSlot placement="feed" />
+      </div>
 
       {/* About Section */}
       <CollectionAboutSection collection={collection} />

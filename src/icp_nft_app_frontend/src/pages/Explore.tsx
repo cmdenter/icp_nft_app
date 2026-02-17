@@ -9,6 +9,7 @@ import { SafeImg } from '../components/SafeImg';
 import { RecentlyViewed } from '../components/RecentlyViewed';
 import { NewsFeed } from '../components/NewsFeed';
 import { AdSlot } from '../components/AdSlot';
+import { SidebarWidgets } from '../components/SidebarWidgets';
 import type { CollectionEntry } from '../types';
 
 /* =================================================================
@@ -334,262 +335,289 @@ const Explore: React.FC = () => {
       )}
 
       {/* =============================================================
-          2. TRENDING NOW — horizontal scrollable NFT items
+          Everything below hero: 2-column layout (main + sidebar)
           ============================================================= */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Trending Now</h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => trending.go('l')}
-              disabled={!trending.canL}
-              className="w-9 h-9 rounded-full bg-os-surface border border-os-border/40 flex items-center justify-center
-                         disabled:opacity-30 hover:bg-os-card transition-colors"
-            >
-              <ChevronLeft size={16} className="text-white" />
-            </button>
-            <button
-              onClick={() => trending.go('r')}
-              disabled={!trending.canR}
-              className="w-9 h-9 rounded-full bg-os-surface border border-os-border/40 flex items-center justify-center
-                         disabled:opacity-30 hover:bg-os-card transition-colors"
-            >
-              <ChevronRight size={16} className="text-white" />
-            </button>
-          </div>
-        </div>
+      <div className="flex gap-6 max-w-[1400px] mx-auto px-4 sm:px-6">
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
 
-        <div
-          ref={trending.ref}
-          className="flex gap-4 overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory pb-4"
-        >
-          {featured.map((item, i) => (
-            <Link
-              key={`${item.collection.id}-${item.idx}`}
-              to={`/collection/${item.collection.id}/nft/${item.idx}`}
-              className="snap-start shrink-0 w-[180px] sm:w-[200px] lg:w-[220px] group/card"
-            >
-              <div
-                className="relative aspect-square rounded-2xl overflow-hidden bg-os-card border border-os-border/30
-                            group-hover/card:border-os-primary/30 group-hover/card:shadow-lg group-hover/card:shadow-os-primary/10
-                            transition-all duration-250"
-              >
-                <SafeImg
-                  urls={item.urls}
-                  alt={`${item.collection.name} #${item.idx}`}
-                  fallback={item.collection.name[0]}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 will-change-transform group-hover/card:scale-105"
-                  loading={i < 8 ? 'eager' : 'lazy'}
-                />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              </div>
-              <div className="mt-2.5 px-0.5">
-                <p className="text-[11px] text-os-primary font-semibold truncate flex items-center gap-1">
-                  {item.collection.name}
-                  {item.collection.verified && <VerifiedIcon size={11} className="shrink-0" />}
-                </p>
-                <p className="text-sm font-bold text-white truncate">
-                  {item.collection.name} #{item.idx}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* =============================================================
-          3. BROWSE BY CATEGORY — 2x2 grid
-          ============================================================= */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Browse by Category</h2>
-          {categoryFilter && (
-            <Link
-              to="/"
-              className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
-            >
-              Clear filter
-            </Link>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {CATEGORY_DEFS.map((cat) => {
-            const count = categoryCounts[cat.id] || 0;
-            const isActive = categoryFilter === cat.id;
-
-            return (
-              <Link
-                key={cat.id}
-                to={isActive ? '/' : `/?category=${cat.id}`}
-                className={`group relative rounded-2xl overflow-hidden border transition-all duration-250 card-hover-glow
-                  ${
-                    isActive
-                      ? 'border-os-primary/50 ring-2 ring-os-primary/20'
-                      : 'border-os-border/40 hover:border-os-primary/20'
-                  }`}
-              >
-                <div
-                  className={`bg-gradient-to-br ${cat.gradient} px-6 py-8 sm:py-10 flex items-center gap-5`}
+          {/* =============================================================
+              2. TRENDING NOW — horizontal scrollable NFT items
+              ============================================================= */}
+          <section className="section-spacing">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Trending Now</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => trending.go('l')}
+                  disabled={!trending.canL}
+                  className="w-9 h-9 rounded-full bg-os-surface border border-os-border/40 flex items-center justify-center
+                             disabled:opacity-30 hover:bg-os-card transition-colors"
                 >
-                  {/* Large letter badge */}
+                  <ChevronLeft size={16} className="text-white" />
+                </button>
+                <button
+                  onClick={() => trending.go('r')}
+                  disabled={!trending.canR}
+                  className="w-9 h-9 rounded-full bg-os-surface border border-os-border/40 flex items-center justify-center
+                             disabled:opacity-30 hover:bg-os-card transition-colors"
+                >
+                  <ChevronRight size={16} className="text-white" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={trending.ref}
+              className="flex gap-4 overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory pb-4"
+            >
+              {featured.map((item, i) => (
+                <Link
+                  key={`${item.collection.id}-${item.idx}`}
+                  to={`/collection/${item.collection.id}/nft/${item.idx}`}
+                  className="snap-start shrink-0 w-[180px] sm:w-[200px] lg:w-[220px] group/card"
+                >
                   <div
-                    className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/[0.06] border border-white/10
-                                flex items-center justify-center group-hover:bg-white/[0.1] group-hover:scale-105
+                    className="relative aspect-square rounded-2xl overflow-hidden bg-os-card border border-os-border/30
+                                group-hover/card:border-os-primary/30 group-hover/card:shadow-lg group-hover/card:shadow-os-primary/10
                                 transition-all duration-250"
                   >
-                    <span className="text-3xl sm:text-4xl font-extrabold text-white/80">
-                      {cat.letter}
-                    </span>
+                    <SafeImg
+                      urls={item.urls}
+                      alt={`${item.collection.name} #${item.idx}`}
+                      fallback={item.collection.name[0]}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 will-change-transform group-hover/card:scale-105"
+                      loading={i < 8 ? 'eager' : 'lazy'}
+                    />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   </div>
-
-                  <div>
-                    <h3 className="font-bold text-white text-lg sm:text-xl mb-1">{cat.name}</h3>
-                    <p className="text-os-text-secondary text-sm">
-                      {count} {count === 1 ? 'collection' : 'collections'}
+                  <div className="mt-2.5 px-0.5">
+                    <p className="text-[11px] text-os-primary font-semibold truncate flex items-center gap-1">
+                      {item.collection.name}
+                      {item.collection.verified && <VerifiedIcon size={11} className="shrink-0" />}
+                    </p>
+                    <p className="text-sm font-bold text-white truncate">
+                      {item.collection.name} #{item.idx}
                     </p>
                   </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          {/* Banner ad between Trending Now and Browse by Category */}
+          <div className="section-spacing">
+            <AdSlot placement="banner" />
+          </div>
+
+          {/* =============================================================
+              3. BROWSE BY CATEGORY — 2x2 grid
+              ============================================================= */}
+          <section className="section-spacing">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Browse by Category</h2>
+              {categoryFilter && (
+                <Link
+                  to="/"
+                  className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
+                >
+                  Clear filter
+                </Link>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {CATEGORY_DEFS.map((cat) => {
+                const count = categoryCounts[cat.id] || 0;
+                const isActive = categoryFilter === cat.id;
+
+                return (
+                  <Link
+                    key={cat.id}
+                    to={isActive ? '/' : `/?category=${cat.id}`}
+                    className={`group relative rounded-2xl overflow-hidden border transition-all duration-250 card-hover-glow
+                      ${
+                        isActive
+                          ? 'border-os-primary/50 ring-2 ring-os-primary/20'
+                          : 'border-os-border/40 hover:border-os-primary/20'
+                      }`}
+                  >
+                    <div
+                      className={`bg-gradient-to-br ${cat.gradient} px-6 py-8 sm:py-10 flex items-center gap-5`}
+                    >
+                      {/* Large letter badge */}
+                      <div
+                        className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/[0.06] border border-white/10
+                                    flex items-center justify-center group-hover:bg-white/[0.1] group-hover:scale-105
+                                    transition-all duration-250"
+                      >
+                        <span className="text-3xl sm:text-4xl font-extrabold text-white/80">
+                          {cat.letter}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 className="font-bold text-white text-lg sm:text-xl mb-1">{cat.name}</h3>
+                        <p className="text-os-text-secondary text-sm">
+                          {count} {count === 1 ? 'collection' : 'collections'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {isActive && (
+                      <div className="absolute top-3 right-3 px-2.5 py-1 bg-os-primary/20 text-os-primary text-[11px] font-bold rounded-full uppercase tracking-wider">
+                        Active
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* News Feed */}
+          <section className="section-spacing">
+            <NewsFeed />
+          </section>
+
+          {/* Feed Ad Slot */}
+          <section className="section-spacing">
+            <AdSlot placement="feed" />
+          </section>
+
+          {/* =============================================================
+              4. TOP COLLECTIONS — ranked list
+              ============================================================= */}
+          <section className="section-spacing">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
+                {categoryFilter ? `Top ${CATEGORY_DEFS.find((c) => c.id === categoryFilter)?.name || ''} Collections` : 'Top Collections'}
+              </h2>
+              <Link
+                to="/rankings"
+                className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
+              >
+                See all rankings
+              </Link>
+            </div>
+
+            <div className="bg-os-surface rounded-2xl border border-os-border/40 overflow-hidden">
+              {/* Table header */}
+              <div className="grid grid-cols-[40px_1fr_100px_100px] sm:grid-cols-[50px_1fr_120px_120px] items-center px-4 sm:px-6 py-3 border-b border-os-border/30">
+                <span className="text-os-text-secondary text-xs font-medium">#</span>
+                <span className="text-os-text-secondary text-xs font-medium">Collection</span>
+                <span className="text-os-text-secondary text-xs font-medium text-right">Floor Price</span>
+                <span className="text-os-text-secondary text-xs font-medium text-right">Supply</span>
+              </div>
+
+              {/* Collection rows */}
+              {displayCollections.length === 0 && (
+                <div className="px-6 py-10 text-center text-os-text-secondary text-sm">
+                  No collections found in this category.
+                </div>
+              )}
+
+              {displayCollections
+                .filter((c) => !c.isLocal)
+                .map((col, i) => (
+                  <TopCollectionRow key={col.id} collection={col} rank={i + 1} />
+                ))}
+            </div>
+          </section>
+
+          {/* Banner ad between Top Collections and Recently Viewed */}
+          <div className="section-spacing">
+            <AdSlot placement="banner" />
+          </div>
+
+          {/* =============================================================
+              5. RECENTLY VIEWED
+              ============================================================= */}
+          <section className="section-spacing">
+            <RecentlyViewed />
+          </section>
+
+          {/* =============================================================
+              6. ICP ECOSYSTEM TOKENS
+              ============================================================= */}
+          <section className="section-spacing">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">ICP Ecosystem Tokens</h2>
+              <Link
+                to="/tokens"
+                className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
+              >
+                View all tokens &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {featuredTokens.map((t) => (
+                <TokenCard key={t.id} token={t} />
+              ))}
+            </div>
+          </section>
+
+          {/* =============================================================
+              7. CREATE & SELL CTA
+              ============================================================= */}
+          <section className="section-spacing pb-12">
+            <div className="rounded-3xl overflow-hidden relative">
+              {/* Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-os-primary/10 via-purple-900/8 to-os-bg dot-grid opacity-40" />
+              <div className="absolute inset-0 bg-gradient-to-r from-os-bg/80 via-transparent to-os-bg/80" />
+
+              <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
+                <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+                    Create and sell your NFTs
+                  </h2>
+                  <p className="text-os-text-secondary text-sm sm:text-base leading-relaxed">
+                    Join the Internet Computer's premier marketplace. Zero gas fees, instant finality,
+                    100% on-chain.
+                  </p>
                 </div>
 
-                {isActive && (
-                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-os-primary/20 text-os-primary text-[11px] font-bold rounded-full uppercase tracking-wider">
-                    Active
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto">
+                  <StepCard
+                    step="1"
+                    title="Connect Wallet"
+                    desc="Link your Internet Identity or Plug wallet to get started in seconds."
+                  />
+                  <StepCard
+                    step="2"
+                    title="Create NFT"
+                    desc="Upload your artwork, add traits and metadata, and mint directly on-chain."
+                  />
+                  <StepCard
+                    step="3"
+                    title="List for Sale"
+                    desc="Set your price and start earning from every sale on the marketplace."
+                  />
+                </div>
 
-      {/* News Feed */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <NewsFeed />
-      </section>
+                <div className="text-center mt-10">
+                  <Link
+                    to="/create"
+                    className="inline-flex items-center gap-2 bg-os-primary hover:bg-os-primary-hover text-white font-semibold
+                               px-8 py-3.5 rounded-2xl transition-all duration-250 text-[15px]
+                               shadow-lg shadow-os-primary/25 hover:shadow-os-primary/40 hover:-translate-y-0.5 btn-press"
+                  >
+                    Start Creating
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
 
-      {/* Ad Slot */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <AdSlot placement="feed" />
-      </section>
-
-      {/* =============================================================
-          4. TOP COLLECTIONS — ranked list
-          ============================================================= */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">
-            {categoryFilter ? `Top ${CATEGORY_DEFS.find((c) => c.id === categoryFilter)?.name || ''} Collections` : 'Top Collections'}
-          </h2>
-          <Link
-            to="/rankings"
-            className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
-          >
-            See all rankings
-          </Link>
         </div>
 
-        <div className="bg-os-surface rounded-2xl border border-os-border/40 overflow-hidden">
-          {/* Table header */}
-          <div className="grid grid-cols-[40px_1fr_100px_100px] sm:grid-cols-[50px_1fr_120px_120px] items-center px-4 sm:px-6 py-3 border-b border-os-border/30">
-            <span className="text-os-text-secondary text-xs font-medium">#</span>
-            <span className="text-os-text-secondary text-xs font-medium">Collection</span>
-            <span className="text-os-text-secondary text-xs font-medium text-right">Floor Price</span>
-            <span className="text-os-text-secondary text-xs font-medium text-right">Supply</span>
+        {/* Right sidebar — sticky, hidden on mobile */}
+        <aside className="hidden lg:block w-[280px] shrink-0">
+          <div className="lg:sticky lg:top-[160px]">
+            <SidebarWidgets />
           </div>
-
-          {/* Collection rows */}
-          {displayCollections.length === 0 && (
-            <div className="px-6 py-10 text-center text-os-text-secondary text-sm">
-              No collections found in this category.
-            </div>
-          )}
-
-          {displayCollections
-            .filter((c) => !c.isLocal)
-            .map((col, i) => (
-              <TopCollectionRow key={col.id} collection={col} rank={i + 1} />
-            ))}
-        </div>
-      </section>
-
-      {/* =============================================================
-          5. RECENTLY VIEWED
-          ============================================================= */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <RecentlyViewed />
-      </section>
-
-      {/* =============================================================
-          6. ICP ECOSYSTEM TOKENS
-          ============================================================= */}
-      <section className="section-spacing px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">ICP Ecosystem Tokens</h2>
-          <Link
-            to="/tokens"
-            className="text-sm text-os-primary hover:text-os-primary-hover font-medium transition-colors"
-          >
-            View all tokens &rarr;
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {featuredTokens.map((t) => (
-            <TokenCard key={t.id} token={t} />
-          ))}
-        </div>
-      </section>
-
-      {/* =============================================================
-          7. CREATE & SELL CTA
-          ============================================================= */}
-      <section className="section-spacing pb-12 px-4 sm:px-6 max-w-[1400px] mx-auto">
-        <div className="rounded-3xl overflow-hidden relative">
-          {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-os-primary/10 via-purple-900/8 to-os-bg dot-grid opacity-40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-os-bg/80 via-transparent to-os-bg/80" />
-
-          <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
-            <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                Create and sell your NFTs
-              </h2>
-              <p className="text-os-text-secondary text-sm sm:text-base leading-relaxed">
-                Join the Internet Computer's premier marketplace. Zero gas fees, instant finality,
-                100% on-chain.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto">
-              <StepCard
-                step="1"
-                title="Connect Wallet"
-                desc="Link your Internet Identity or Plug wallet to get started in seconds."
-              />
-              <StepCard
-                step="2"
-                title="Create NFT"
-                desc="Upload your artwork, add traits and metadata, and mint directly on-chain."
-              />
-              <StepCard
-                step="3"
-                title="List for Sale"
-                desc="Set your price and start earning from every sale on the marketplace."
-              />
-            </div>
-
-            <div className="text-center mt-10">
-              <Link
-                to="/create"
-                className="inline-flex items-center gap-2 bg-os-primary hover:bg-os-primary-hover text-white font-semibold
-                           px-8 py-3.5 rounded-2xl transition-all duration-250 text-[15px]
-                           shadow-lg shadow-os-primary/25 hover:shadow-os-primary/40 hover:-translate-y-0.5 btn-press"
-              >
-                Start Creating
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+        </aside>
+      </div>
     </div>
   );
 };

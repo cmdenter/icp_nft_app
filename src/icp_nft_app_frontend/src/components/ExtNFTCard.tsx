@@ -95,7 +95,7 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
     return (
       <div
         onClick={handleClick}
-        className="group flex gap-4 rounded-xl bg-os-surface border border-os-border/40 p-3 cursor-pointer hover:bg-os-card/60 hover:border-os-primary/20 transition-all duration-250"
+        className="group flex gap-4 rounded-xl bg-os-surface border border-os-border/30 p-3.5 cursor-pointer hover:bg-os-card/40 hover:border-os-primary/20 hover:shadow-lg transition-all duration-200"
       >
         {/* Image */}
         <div className="w-[120px] h-[120px] rounded-lg overflow-hidden shrink-0 bg-os-card">
@@ -142,7 +142,7 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
               <button
                 onClick={handleWishlist}
                 aria-label="Toggle watchlist"
-                className="p-1.5 rounded-lg bg-os-card/60 hover:bg-os-card text-os-text-secondary hover:text-white transition-colors"
+                className="p-2 rounded-lg bg-os-card/60 hover:bg-os-card text-os-text-secondary hover:text-white chip-interactive"
               >
                 {isWishlisted ? <HeartFilledIcon size={14} className="text-os-secondary" /> : <HeartIcon size={14} />}
               </button>
@@ -150,10 +150,10 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
                 <button
                   onClick={handleAddToCart}
                   disabled={isInCart}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`h-9 px-4 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isInCart
                       ? 'bg-os-green/10 text-os-green border border-os-green/30'
-                      : 'bg-os-primary hover:bg-os-primary-hover text-white'
+                      : 'bg-os-primary hover:bg-os-primary-hover hover:shadow-md text-white'
                   }`}
                 >
                   {isInCart ? 'In Cart' : 'Add to Cart'}
@@ -170,7 +170,7 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className="card-base group overflow-hidden cursor-pointer hover:-translate-y-1.5"
+      className="card-base group overflow-hidden cursor-pointer"
     >
       {/* Image */}
       <div className="aspect-square bg-os-card overflow-hidden relative">
@@ -226,7 +226,7 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
       </div>
 
       {/* Info */}
-      <div className="p-4">
+      <div className="p-3.5">
         <p className="text-[11px] text-os-primary font-semibold truncate mb-0.5">{collectionName}</p>
         <p className="text-sm font-bold text-white truncate">{item.name}</p>
 
@@ -239,7 +239,7 @@ export const ExtNFTCard: React.FC<ExtNFTCardProps> = ({
         )}
 
         {/* Price row */}
-        <div className="mt-2.5 pt-2.5 border-t border-os-border/40">
+        <div className="mt-2 pt-2 border-t border-os-border/20">
           {listing ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">

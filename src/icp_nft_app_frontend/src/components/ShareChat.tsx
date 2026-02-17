@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { useNFTStore } from '../store/nftStore';
-import { ThumbsUpIcon, TrashIcon } from './icons';
+import { ThumbsUpIcon, ThumbsDownIcon, TrashIcon, SendIcon } from './icons';
 
 function timeAgo(ts: number): string {
   const seconds = Math.floor((Date.now() - ts) / 1000);
@@ -29,9 +29,11 @@ export const ShareChat: React.FC<ShareChatProps> = ({ threadId, title }) => {
   const addMessage = useChatStore((s) => s.addMessage);
   const deleteMessage = useChatStore((s) => s.deleteMessage);
   const toggleLike = useChatStore((s) => s.toggleLike);
+  const toggleDislike = useChatStore((s) => s.toggleDislike);
   const getMessages = useChatStore((s) => s.getMessages);
   const getMessageCount = useChatStore((s) => s.getMessageCount);
   const likedMessages = useChatStore((s) => s.likedMessages);
+  const dislikedMessages = useChatStore((s) => s.dislikedMessages);
 
   useEffect(() => {
     setVisibleCount(20);
@@ -108,9 +110,9 @@ export const ShareChat: React.FC<ShareChatProps> = ({ threadId, title }) => {
             <button
               onClick={handleSend}
               disabled={!canSend}
-              className="bg-os-primary hover:bg-os-primary-hover text-white text-xs font-semibold px-4 py-1.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-os-primary hover:bg-os-primary-hover text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
-              Send
+              <SendIcon size={14} />
             </button>
           </div>
         </div>
@@ -150,7 +152,7 @@ export const ShareChat: React.FC<ShareChatProps> = ({ threadId, title }) => {
           {visible.map((msg) => (
             <div
               key={msg.id}
-              className="rounded-xl bg-os-surface/50 border border-os-border/20 p-3"
+              className="rounded-xl bg-os-surface/50 border-l-[3px] border-l-os-primary/40 border border-os-border/20 p-3"
             >
               {/* Top row: avatar, author, timestamp */}
               <div className="flex items-center gap-2 mb-2">
@@ -172,20 +174,38 @@ export const ShareChat: React.FC<ShareChatProps> = ({ threadId, title }) => {
                 {msg.text}
               </p>
 
-              {/* Bottom row: like + delete */}
-              <div className="flex items-center justify-between">
+              {/* Bottom row: thumbs up, thumbs down, spacer, delete */}
+              <div className="flex items-center gap-3">
+                {/* Thumbs up */}
                 <button
                   onClick={() => toggleLike(msg.id)}
                   className={`flex items-center gap-1 text-xs transition-colors ${
                     likedMessages[msg.id]
-                      ? 'text-os-primary'
-                      : 'text-os-text-secondary hover:text-os-primary'
+                      ? 'text-os-green'
+                      : 'text-os-text-secondary hover:text-os-green'
                   }`}
                 >
                   <ThumbsUpIcon size={14} />
                   {msg.likes > 0 && <span>{msg.likes}</span>}
                 </button>
 
+                {/* Thumbs down */}
+                <button
+                  onClick={() => toggleDislike(msg.id)}
+                  className={`flex items-center gap-1 text-xs transition-colors ${
+                    dislikedMessages[msg.id]
+                      ? 'text-os-secondary'
+                      : 'text-os-text-secondary hover:text-os-secondary'
+                  }`}
+                >
+                  <ThumbsDownIcon size={14} />
+                  {msg.dislikes > 0 && <span>{msg.dislikes}</span>}
+                </button>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Delete (only if current user is author) */}
                 {msg.author === currentPrincipal && (
                   <button
                     onClick={() => deleteMessage(msg.id)}
