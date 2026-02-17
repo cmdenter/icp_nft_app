@@ -15,6 +15,9 @@ import { MyListings } from '../components/account/MyListings';
 import { MyCollection } from '../components/account/MyCollection';
 import { AccountSettings } from '../components/account/AccountSettings';
 import { useNotificationStore } from '../store/notificationStore';
+import { COLLECTIONS } from '../api/collections';
+import { getExtImageUrls } from '../api/ext';
+import { SafeImg } from '../components/SafeImg';
 
 const TABS = [
   { key: 'overview', label: 'Overview', icon: UserIcon },
@@ -60,7 +63,6 @@ const Account: React.FC = () => {
   const bio = useSettingsStore((s) => s.bio);
   const avatarUrl = useSettingsStore((s) => s.avatarUrl);
   const bannerUrl = useSettingsStore((s) => s.bannerUrl);
-  const themeColor = useSettingsStore((s) => s.themeColor);
   const website = useSettingsStore((s) => s.website);
   const twitter = useSettingsStore((s) => s.twitter);
   const discord = useSettingsStore((s) => s.discord);
@@ -72,6 +74,12 @@ const Account: React.FC = () => {
   const addr = plugPrincipal || principal;
   const truncated = addr.length > 16 ? addr.slice(0, 8) + '...' + addr.slice(-4) : addr;
   const name = displayName || 'Unnamed';
+
+  // Default images from a real collection when user hasn't set custom ones
+  const extCol = COLLECTIONS.find((c) => c.standard === 'ext');
+  const defaultBannerUrls = extCol ? getExtImageUrls(extCol.canisterId, 42) : [];
+  const defaultAvatarUrls = extCol ? getExtImageUrls(extCol.canisterId, 7) : [];
+
   const successfulPurchases = purchases.filter((p) => p.status === 'success');
   const totalSpent = successfulPurchases.reduce((s, p) => s + p.price, 0);
 
@@ -105,11 +113,11 @@ const Account: React.FC = () => {
           {bannerUrl ? (
             <img src={bannerUrl} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div
-              className="w-full h-full"
-              style={{
-                background: `linear-gradient(135deg, ${themeColor}40 0%, #581c8730 40%, ${themeColor}20 70%, #ed1e7915 100%)`,
-              }}
+            <SafeImg
+              urls={defaultBannerUrls}
+              alt=""
+              fallback=""
+              className="w-full h-full object-cover opacity-60"
             />
           )}
           {/* Overlay gradient */}
@@ -136,12 +144,12 @@ const Account: React.FC = () => {
               {avatarUrl ? (
                 <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
               ) : (
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ background: `linear-gradient(135deg, ${themeColor}30, ${themeColor}10)` }}
-                >
-                  <UserIcon size={40} className="text-os-text-secondary" />
-                </div>
+                <SafeImg
+                  urls={defaultAvatarUrls}
+                  alt={name}
+                  fallback={name[0] || '?'}
+                  className="w-full h-full object-cover"
+                />
               )}
             </div>
             <button

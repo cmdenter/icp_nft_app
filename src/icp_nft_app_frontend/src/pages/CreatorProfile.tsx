@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getCreator, getCollectionsByCreator } from '../api/collections';
+import { getCreator, getCollectionsByCreator, getCreatorAvatarUrls, getCollectionBannerUrls } from '../api/collections';
 import { useCreatorStore } from '../store/creatorStore';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImg } from '../components/SafeImg';
@@ -31,17 +31,36 @@ export default function CreatorProfile() {
   }
 
   const totalItems = collections.reduce((sum, c) => sum + (c.totalSupply ?? 0), 0);
+  const bannerUrls = collections.length > 0 ? getCollectionBannerUrls(collections[0]) : [];
+  const avatarUrls = creatorId ? getCreatorAvatarUrls(creatorId) : [];
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
       <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: creator.name }]} />
 
+      {/* Banner */}
+      <div className="relative -mx-4 sm:-mx-6 mt-4">
+        <div className="h-[160px] sm:h-[200px] overflow-hidden relative">
+          {bannerUrls.length > 0 ? (
+            <SafeImg
+              urls={bannerUrls}
+              alt=""
+              fallback=""
+              className="w-full h-full object-cover blur-sm opacity-40"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-os-primary/20 via-purple-900/20 to-os-bg" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-os-bg via-os-bg/40 to-transparent" />
+        </div>
+      </div>
+
       {/* Hero section */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-5 items-start">
+      <div className="relative -mt-14 flex flex-col sm:flex-row gap-5 items-start">
         {/* Avatar */}
         <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl border-4 border-os-bg ring-2 ring-os-border overflow-hidden">
           <SafeImg
-            urls={creator.avatar ? [creator.avatar] : []}
+            urls={avatarUrls}
             alt={creator.name}
             fallback={creator.name.charAt(0)}
             className="w-full h-full object-cover"

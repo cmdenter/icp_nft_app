@@ -1,4 +1,5 @@
 import type { CollectionEntry, CreatorInfo } from '../types';
+import { getExtImageUrls } from './ext';
 
 const LOCAL_HOST = 'http://127.0.0.1:4943';
 const MAINNET_HOST = 'https://ic0.app';
@@ -132,4 +133,35 @@ export function getCreator(creatorId: string): CreatorInfo | undefined {
 
 export function getCollectionsByCreator(creatorId: string): CollectionEntry[] {
   return COLLECTIONS.filter((c) => c.creator?.id === creatorId);
+}
+
+/** Get image URLs for a creator's avatar — falls back to their first collection's NFT */
+export function getCreatorAvatarUrls(creatorId: string): string[] {
+  const creator = getCreator(creatorId);
+  if (creator?.avatar) return [creator.avatar];
+  const cols = getCollectionsByCreator(creatorId);
+  const ext = cols.find((c) => c.standard === 'ext');
+  if (ext) return getExtImageUrls(ext.canisterId, 0);
+  const anyExt = COLLECTIONS.find((c) => c.standard === 'ext');
+  if (anyExt) return getExtImageUrls(anyExt.canisterId, 1);
+  return [];
+}
+
+/** Get image URLs for a collection's avatar — never empty */
+export function getCollectionImageUrls(collection: CollectionEntry): string[] {
+  if (collection.image) return [collection.image];
+  if (collection.standard === 'ext') return getExtImageUrls(collection.canisterId, 0);
+  const ext = COLLECTIONS.find((c) => c.standard === 'ext');
+  if (ext) return getExtImageUrls(ext.canisterId, 1);
+  return [];
+}
+
+/** Get image URLs for a collection's banner — never empty */
+export function getCollectionBannerUrls(collection: CollectionEntry): string[] {
+  if (collection.banner) return [collection.banner];
+  if (collection.image) return [collection.image];
+  if (collection.standard === 'ext') return getExtImageUrls(collection.canisterId, 42);
+  const ext = COLLECTIONS.find((c) => c.standard === 'ext');
+  if (ext) return getExtImageUrls(ext.canisterId, 42);
+  return [];
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SafeImg } from './SafeImg';
 import { VerifiedIcon } from './icons';
 import type { CollectionEntry } from '../types';
+import { getCollectionImageUrls } from '../api/collections';
 
 interface CreatorCollectionCardProps {
   collection: CollectionEntry;
@@ -15,7 +16,7 @@ const CreatorCollectionCard: React.FC<CreatorCollectionCardProps> = ({ collectio
         {/* Banner / image area */}
         <div className="h-[140px] relative overflow-hidden">
           <SafeImg
-            urls={[collection.banner || collection.image]}
+            urls={getCollectionImageUrls(collection)}
             alt={collection.name}
             fallback={collection.name.charAt(0)}
             className="object-cover w-full h-full"

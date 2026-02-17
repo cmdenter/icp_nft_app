@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SafeImg } from './SafeImg';
 import { VerifiedIcon, ExternalLink, XSocialIcon, DiscordIcon, ICPTokenIcon } from './icons';
 import { formatPrice, formatNumber } from '../utils/format';
+import { getCollectionImageUrls, getCollectionBannerUrls } from '../api/collections';
 import type { CollectionEntry, ExtCollectionStats } from '../types';
 
 interface CollectionHeroProps {
@@ -24,7 +25,8 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
   marketLoading,
 }) => {
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const bannerSrc = collection.banner || collection.image;
+  const bannerUrls = getCollectionBannerUrls(collection);
+  const avatarUrls = getCollectionImageUrls(collection);
   const descriptionLong = collection.description.length > 120;
 
   const floorPrice = stats?.floorPrice ?? collection.floorPrice;
@@ -76,15 +78,12 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
     <section className="relative">
       {/* Banner area */}
       <div className="relative h-[280px] overflow-hidden">
-        {bannerSrc ? (
-          <img
-            src={bannerSrc}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-os-primary/20 via-purple-900/20 to-os-bg" />
-        )}
+        <SafeImg
+          urls={bannerUrls}
+          alt=""
+          fallback=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40"
+        />
 
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-os-bg via-os-bg/60 to-transparent" />
@@ -96,7 +95,7 @@ export const CollectionHero: React.FC<CollectionHeroProps> = ({
         <div className="flex items-end gap-4 sm:gap-5 -mt-[60px] sm:-mt-[70px]">
           {/* Avatar */}
           <SafeImg
-            urls={[collection.image]}
+            urls={avatarUrls}
             fallback={collection.name[0] || '?'}
             alt={collection.name}
             className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-2xl border-4 border-os-bg ring-2 ring-os-border shadow-2xl object-cover flex-shrink-0 relative z-10"

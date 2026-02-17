@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { getCreator, getCollectionsByCreator } from '../api/collections';
+import { getCreator, getCollectionsByCreator, getCreatorAvatarUrls, getCollectionBannerUrls } from '../api/collections';
 import { useCreatorStore } from '../store/creatorStore';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImg } from '../components/SafeImg';
@@ -44,6 +44,8 @@ export default function CreatorDashboard() {
   }
 
   const basePath = `/creator/${creatorId}/dashboard`;
+  const bannerUrls = collections.length > 0 ? getCollectionBannerUrls(collections[0]) : [];
+  const avatarUrls = creatorId ? getCreatorAvatarUrls(creatorId) : [];
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
@@ -58,23 +60,24 @@ export default function CreatorDashboard() {
       {/* Profile Banner */}
       <div className="relative mt-2 mb-8">
         <div className="h-[140px] sm:h-[180px] rounded-2xl overflow-hidden relative">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(32,129,226,0.4) 0%, rgba(88,28,135,0.3) 40%, rgba(41,171,226,0.2) 70%, rgba(237,30,121,0.15) 100%)',
-            }}
-          />
-          <div className="absolute inset-0 dot-grid opacity-20" />
-          <div className="absolute top-4 right-[15%] w-32 h-32 rounded-full bg-os-primary/10 blur-3xl" />
-          <div className="absolute bottom-0 left-[20%] w-40 h-24 rounded-full bg-purple-500/10 blur-3xl" />
+          {bannerUrls.length > 0 ? (
+            <SafeImg
+              urls={bannerUrls}
+              alt=""
+              fallback=""
+              className="w-full h-full object-cover blur-sm opacity-40"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-os-primary/20 via-purple-900/20 to-os-bg" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-os-bg/80 via-os-bg/30 to-transparent" />
         </div>
 
         <div className="absolute -bottom-10 left-6 sm:left-8">
           <div className="relative">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-os-surface border-4 border-os-bg flex items-center justify-center shadow-2xl ring-2 ring-os-primary/20 overflow-hidden">
               <SafeImg
-                urls={creator.avatar ? [creator.avatar] : []}
+                urls={avatarUrls}
                 alt={creator.name}
                 fallback={creator.name.charAt(0)}
                 className="w-full h-full object-cover"

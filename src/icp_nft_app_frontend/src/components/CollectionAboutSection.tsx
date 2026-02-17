@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SafeImg } from './SafeImg';
 import { CopyIcon, ExternalLink, XSocialIcon, DiscordIcon, GithubIcon, VerifiedIcon } from './icons';
+import { getCreatorAvatarUrls } from '../api/collections';
 import type { CollectionEntry } from '../types';
 
 interface CollectionAboutSectionProps {
@@ -102,7 +103,7 @@ export const CollectionAboutSection: React.FC<CollectionAboutSectionProps> = ({ 
           <div className="rounded-2xl border border-os-border bg-os-surface p-5">
             <div className="flex items-center gap-3 mb-3">
               <SafeImg
-                urls={creator.avatar ? [creator.avatar] : []}
+                urls={creator.id ? getCreatorAvatarUrls(creator.id) : (creator.avatar ? [creator.avatar] : [])}
                 fallback={creator.name[0] || '?'}
                 alt={creator.name}
                 className="w-12 h-12 rounded-xl object-cover flex-shrink-0"

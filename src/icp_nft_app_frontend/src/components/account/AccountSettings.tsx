@@ -3,9 +3,12 @@ import { useNFTStore } from '../../store/nftStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useNotificationStore } from '../../store/notificationStore';
 import {
-  CopyIcon, UserIcon, GlobeIcon, XSocialIcon, DiscordIcon,
+  CopyIcon, GlobeIcon, XSocialIcon, DiscordIcon,
   LinkIcon,
 } from '../icons';
+import { COLLECTIONS } from '../../api/collections';
+import { getExtImageUrls } from '../../api/ext';
+import { SafeImg } from '../SafeImg';
 
 const THEME_COLORS = [
   '#2081E2', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981',
@@ -52,6 +55,10 @@ export const AccountSettings: React.FC = () => {
   const discord = useSettingsStore((s) => s.discord);
   const setField = useSettingsStore((s) => s.setField);
   const showToast = useNotificationStore((s) => s.showToast);
+
+  const extCol = COLLECTIONS.find((c) => c.standard === 'ext');
+  const defaultAvatarUrls = extCol ? getExtImageUrls(extCol.canisterId, 7) : [];
+  const defaultBannerUrls = extCol ? getExtImageUrls(extCol.canisterId, 42) : [];
 
   const [localName, setLocalName] = useState(displayName);
   const [localBio, setLocalBio] = useState(bio);
@@ -197,9 +204,12 @@ export const AccountSettings: React.FC = () => {
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <UserIcon size={24} className="text-os-text-secondary" />
-                  </div>
+                  <SafeImg
+                    urls={defaultAvatarUrls}
+                    alt=""
+                    fallback="?"
+                    className="w-full h-full object-cover"
+                  />
                 )}
               </div>
               <div className="flex gap-2">
@@ -230,9 +240,11 @@ export const AccountSettings: React.FC = () => {
                 {bannerUrl ? (
                   <img src={bannerUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div
-                    className="w-full h-full"
-                    style={{ background: `linear-gradient(135deg, ${themeColor}40, ${themeColor}10)` }}
+                  <SafeImg
+                    urls={defaultBannerUrls}
+                    alt=""
+                    fallback=""
+                    className="w-full h-full object-cover opacity-60"
                   />
                 )}
               </div>
