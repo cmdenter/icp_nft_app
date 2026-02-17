@@ -14,9 +14,9 @@ function getLocalCanisterId(): string {
   }
 }
 
-/** Build direct image URL for EXT collections */
+/** Build the best direct image URL for an EXT collection */
 function extImageUrl(canisterId: string, index: number): string {
-  return `https://${canisterId}.raw.ic0.app/Token/${index}`;
+  return getExtImageUrls(canisterId, index)[0];
 }
 
 export const COLLECTIONS: CollectionEntry[] = [

@@ -20,17 +20,28 @@ function makeExtTokenId(canisterId: string, index: number): string {
   return Principal.fromUint8Array(combined).toText();
 }
 
+// ICPunks uses /Token/{index} (redirects to cache CDN).
+// Most other EXT canisters use ?tokenid= and return /Token/ as plain text.
+const ICPUNKS_CANISTER = 'qcg3w-tyaaa-aaaah-qakea-cai';
+
 /**
  * Get all possible image URLs for an EXT token, ordered by likelihood.
  * Different collections use different HTTP endpoints for images.
  */
 export function getExtImageUrls(canisterId: string, index: number): string[] {
   const tokenId = makeExtTokenId(canisterId, index);
-  // /Token/{index} works most reliably (ICPunks redirects ?tokenid= to broken URL)
+  if (canisterId === ICPUNKS_CANISTER) {
+    // ICPunks: /Token/{index} redirects to CDN cache; ?tokenid= redirects to broken URL
+    return [
+      `https://${canisterId}.raw.ic0.app/Token/${index}`,
+      `https://${canisterId}.raw.ic0.app/?type=thumbnail&tokenid=${tokenId}`,
+    ];
+  }
+  // All other EXT collections: ?tokenid= returns actual images; /Token/ returns text
   return [
-    `https://${canisterId}.raw.ic0.app/Token/${index}`,
     `https://${canisterId}.raw.ic0.app/?tokenid=${tokenId}`,
     `https://${canisterId}.raw.ic0.app/?type=thumbnail&tokenid=${tokenId}`,
+    `https://${canisterId}.raw.ic0.app/Token/${index}`,
   ];
 }
 
@@ -53,11 +64,13 @@ export async function fetchExtTokens(
 
   const items: GalleryItem[] = [];
   for (let i = startIndex; i < endIndex; i++) {
+    // Use the first (best) URL from getExtImageUrls for the primary image
+    const urls = getExtImageUrls(collection.canisterId, i);
     items.push({
       id: i,
       name: `${collection.name} #${i}`,
       description: '',
-      image: `https://${collection.canisterId}.raw.ic0.app/Token/${i}`,
+      image: urls[0],
       owner: '',
       mintedAt: 0,
       traits: [],
