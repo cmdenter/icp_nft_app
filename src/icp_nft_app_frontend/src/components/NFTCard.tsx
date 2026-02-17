@@ -6,33 +6,14 @@ import { useCartStore } from '../store/cartStore';
 import { useNotificationStore } from '../store/notificationStore';
 import { useReviewStore } from '../store/reviewStore';
 import { getCollection } from '../api/collections';
+import { getExtImageUrls } from '../api/ext';
+import { SafeImg } from './SafeImg';
 import { HeartIcon, HeartFilledIcon, ShoppingBagIcon, CartIcon, VerifiedIcon, StarFilledIcon, ICPTokenIcon } from './icons';
 import type { GalleryItem } from '../types';
 
 interface Props {
   item: GalleryItem;
   listing?: { price: number; seller: string };
-}
-
-function SafeImg({ src, alt = '', fallback, className = '', ...rest }:
-  React.ImgHTMLAttributes<HTMLImageElement> & { fallback: string }) {
-  const [ok, setOk] = React.useState(true);
-  if (!ok || !src) {
-    return (
-      <div
-        className={className}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'linear-gradient(135deg, #15253B 0%, #1C3150 50%, rgba(32,129,226,0.12) 100%)',
-        }}
-      >
-        <span style={{ color: 'rgba(255,255,255,0.25)', fontWeight: 700, fontSize: '1.1rem', userSelect: 'none' }}>
-          {fallback}
-        </span>
-      </div>
-    );
-  }
-  return <img src={src} alt={alt} className={className} onError={() => setOk(false)} {...rest} />;
 }
 
 const NFTCardInner: React.FC<Props> = ({ item, listing }) => {
@@ -73,6 +54,15 @@ const NFTCardInner: React.FC<Props> = ({ item, listing }) => {
   const collectionName = item.collectionId
     ? (getCollection(item.collectionId)?.name || 'Unknown Collection')
     : 'ICP Speed NFTs';
+
+  // Build multi-URL fallback chain for the image
+  const imageUrls = useMemo(() => {
+    const col = item.collectionId ? getCollection(item.collectionId) : undefined;
+    if (col && col.standard === 'ext') {
+      return getExtImageUrls(col.canisterId, item.id);
+    }
+    return item.image ? [item.image] : [];
+  }, [item.collectionId, item.id, item.image]);
 
   const handleClick = useCallback(() => {
     if (item.id < 0) return;
@@ -139,7 +129,7 @@ const NFTCardInner: React.FC<Props> = ({ item, listing }) => {
       {/* Image */}
       <div className="aspect-square bg-os-card overflow-hidden relative" onClick={handleClick}>
         <SafeImg
-          src={item.image}
+          urls={imageUrls}
           alt={item.name}
           loading="lazy"
           decoding="async"
