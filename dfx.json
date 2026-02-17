@@ -1,0 +1,21 @@
+{
+  "canisters": {
+    "nft": {
+      "main": "src/nft/main.mo",
+      "type": "motoko"
+    },
+    "frontend": {
+      "dependencies": ["nft"],
+      "source": ["src/icp_nft_app_frontend/dist"],
+      "type": "assets",
+      "build": ["cd src/icp_nft_app_frontend && npm run build"]
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": "src/icp_nft_app_frontend/.env"
+}

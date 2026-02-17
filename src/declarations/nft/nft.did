@@ -1,0 +1,74 @@
+type Value = 
+ variant {
+   Array: vec Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type StreamingStrategy = variant {
+                           Callback:
+                            record {
+                              callback:
+                               func (StreamingCallbackToken) ->
+                                (StreamingCallbackHttpResponse) query;
+                              token: StreamingCallbackToken;
+                            };};
+type StreamingCallbackToken = 
+ record {
+   content_encoding: text;
+   index: nat;
+   key: text;
+ };
+type StreamingCallbackHttpResponse = 
+ record {
+   body: blob;
+   token: opt StreamingCallbackToken;
+ };
+type HttpResponse = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   status_code: nat16;
+   streaming_strategy: opt StreamingStrategy;
+ };
+type HttpRequest = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   method: text;
+   url: text;
+ };
+type HeaderField = 
+ record {
+   text;
+   text;
+ };
+type Account = 
+ record {
+   owner: principal;
+   subaccount: opt blob;
+ };
+service : {
+  http_request: (req: HttpRequest) -> (HttpResponse) query;
+  icrc7_balance_of: (account: Account) -> (nat) query;
+  icrc7_name: () -> (text) query;
+  icrc7_owner_of: (token_ids: vec nat) -> (vec opt Account) query;
+  icrc7_symbol: () -> (text) query;
+  icrc7_token_metadata: (token_ids: vec nat) ->
+   (vec opt vec record {
+                  text;
+                  Value;
+                }) query;
+  icrc7_tokens: (prev: opt nat, take: opt nat) -> (vec nat) query;
+  icrc7_tokens_of: (account: Account, prev: opt nat, take: opt nat) ->
+   (vec nat) query;
+  icrc7_total_supply: () -> (nat) query;
+  mint: (to: principal, name: text, description: text, image: text) -> (nat);
+  rebuildAllViews: () -> ();
+  transfer: (tokenId: nat, to: principal) -> (bool);
+}

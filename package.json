@@ -1,0 +1,14 @@
+{
+  "name": "icp_nft_app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "setup": "dfx start --background --clean && dfx deploy nft && dfx generate nft",
+    "dev": "cd src/icp_nft_app_frontend && npm run dev",
+    "build": "cd src/icp_nft_app_frontend && npm run build",
+    "deploy": "dfx deploy",
+    "seed": "bash scripts/seed.sh",
+    "full-start": "npm run setup && npm run seed && npm run dev",
+    "stop": "dfx stop"
+  }
+}
